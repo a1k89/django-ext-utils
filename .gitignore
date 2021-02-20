@@ -1,3 +1,7 @@
 *.pyc
 .idea/
 ienv/
+migrations/
+build/
+dist/
+django_rest_sms_auth.egg-info/
