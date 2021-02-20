@@ -19,17 +19,18 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     ...
-    'django_ext_utils',  # you have to add this
+    'django_ext_utils', 
 ]
+
+SERIALIZERS_PATH = 'api.v1.serializers' # path to serializers folder
 ```
 
 ## Usage
-
-##### ResizeImageMixin
+#### ResizeImageMixin
 Resize image on the fly before save to `ImageField`:
 ```python
-from django_ext_utils.utils import ResizeImageMixin
 from django.contrib.auth.models import AbstractUser
+from django_ext_utils.utils import ResizeImageMixin
 
 class User(AbstractUser, ResizeImageMixin):
     avatar = models.ImageField(upload_to='avatars')
@@ -37,24 +38,24 @@ class User(AbstractUser, ResizeImageMixin):
     
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.resize(self.avatar, (200, 200))
+            self.resize(self.avatar, (200, 200)) # here!
 
         super().save(*args, **kwargs)
 ```
 
-##### DeletedModel
+#### DeletedModelMixin
 On `delete` mark `is_mark_as_delete` instead 
 ```python
-from django_ext_utils.utils import DeletedModel
+from django_ext_utils.utils import DeletedModelMixin
 ```
 
-##### SingletonModel
+#### SingletonModelMixin
 Create only one instance of model
 ```python
-from django_ext_utils.utils import SingletonModel
+from django_ext_utils.utils import SingletonModelMixin
 ```
 
-##### Service
+#### Service
 Service-form-oriented helper (I really like services)
 ```python
 from django_ext_utils.utils import Service
@@ -88,40 +89,39 @@ return Response(subscription.serialize_data)
 
 ### Rest api helpers
 #### ResponsesMixin
-* wrapper for Response
-* simple_text_response/success_objects_response/error_response
+* wrapper for `rest_framework.Response` with statuses
+* `simple_text_response` return text with `200` code
+* `success_objects_response` return object with `200` code
+* `error_response` return `Error` object with `400` code
 
 ```python
 class UserProfileViewSet(ResponsesMixin, GenericAPIView):
     serializer_class = UserSerializer
     
     def post(self, request, *args, **kwargs):
-        user = self.request.user
-        serializer = UserSerializer(instance=self.request.user,
-                                    data=self.request.data,
-                                    context={'request': self.request})
+        user = request.user
+        serializer = UserSerializer(instance=request.user,
+                                    data=request.data,
+                                    context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return self.success_objects_response(serializer.data) 
+            return self.success_objects_response(serializer.data) # here
 
-        return self.error_response(serializer.errors)
+        return self.error_response(serializer.errors) # here
 
     def get(self, request, *args, **kwargs):
         user = request.user
         data = user._serialize_data(request)
 
-        return self.success_objects_response(data)
+        return self.success_objects_response(data) # here
 ```
 ##### Base
 Abstract class to help serialize your models
 In your `settings.py` add 
-```
-SERIALIZERS_PATH = 'api.v1.serializers' # path to serializer folder
-```
-* get_serializer # Return serializer by name (<Model>Serializer)
-* get_short_serializer # Retrun another serializer by name (<Model>ShortSerializer)
-* serialize_data # Find serializer by name and serialize data
-* _serialize_data # Find serializer by name and serialize data with request
+* get_serializer # Return serializer by name (**Model**Serializer)
+* get_short_serializer # Retrun another serializer by name (**Model**ShortSerializer)
+* serialize_data # Find serializer by name and return `serialize data`
+* _serialize_data(request)  # Find serializer by name and serialize data with `request`
 
 ```python
 from django_ext_utils.rest_utils import Base
@@ -147,7 +147,7 @@ from rest_framework.generics import GenericAPIView
 class UserApiView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         user = request.user
-        data = user._serialize_data(request)
+        data = user._serialize_data(request) # here!
         return self.success_objects_response(data)
 ```
 

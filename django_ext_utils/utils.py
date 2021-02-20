@@ -25,7 +25,7 @@ class ResizeImageMixin:
         imageField.save(random_name, file, save=False)
 
 
-class DeletedModel(models.Model):
+class DeletedModelMixin(models.Model):
     is_mark_as_delete = models.BooleanField(default=False)
 
     class Meta:
@@ -36,7 +36,7 @@ class DeletedModel(models.Model):
         self.save()
 
 
-class SingletonModel(models.Model):
+class SingletonModelMixin(models.Model):
     class Meta:
         abstract = True
 
