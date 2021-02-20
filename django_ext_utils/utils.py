@@ -54,20 +54,20 @@ class InvalidInputsError(Exception):
 
     def __str__(self):
         return (
-            f'{repr(self.errors)} ')
+            f'{repr(self.errors)}')
 
 
 class Service(forms.Form):
-    def service_clean(self):
+    def clean_perform(self):
         if not self.is_valid():
             raise InvalidInputsError(self.errors)
 
     @classmethod
-    def execute(cls, inputs, **kwargs):
+    def exec(cls, inputs, **kwargs):
         instance = cls(inputs, **kwargs)
-        instance.service_clean()
+        instance.clean_perform()
         with transaction.atomic():
-            return instance.process()
+            return instance.go()
 
-    def process(self):
+    def go(self):
         raise NotImplementedError()
