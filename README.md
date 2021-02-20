@@ -117,7 +117,6 @@ class UserProfileViewSet(ResponsesMixin, GenericAPIView):
 ```
 ##### Base
 Abstract class to help serialize your models
-In your `settings.py` add 
 * get_serializer # Return serializer by name (**Model**Serializer)
 * get_short_serializer # Retrun another serializer by name (**Model**ShortSerializer)
 * serialize_data # Find serializer by name and return `serialize data`
