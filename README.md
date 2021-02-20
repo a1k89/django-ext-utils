@@ -122,6 +122,7 @@ Abstract class to help serialize your models
 * serialize_data # Find serializer by name and return `serialize data`
 * _serialize_data(request)  # Find serializer by name and serialize data with `request`
 
+* IMPORTANT: you must create serializer by rule: **ModelName**Serializer or **ModelName**ShortSerializer
 ```python
 from django_ext_utils.rest_utils import Base
 
